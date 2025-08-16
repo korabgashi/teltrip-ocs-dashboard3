@@ -13,7 +13,7 @@ export async function POST(req) {
     };
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8 sec timeout
 
     const response = await fetch(API_URL, {
       method: "POST",
