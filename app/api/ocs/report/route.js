@@ -5,7 +5,6 @@ const API_URL = "https://ocs-api.esimvault.cloud/v1?token=HgljQn4Uhe6Ny07qTzYqPL
 export async function POST(req) {
   try {
     const input = await req.json();
-
     const body = {
       reportByPackageWeekly: {
         accountId: Number(input.accountId),
@@ -13,14 +12,20 @@ export async function POST(req) {
       }
     };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(body),
-      cache: "no-store"
+      cache: "no-store",
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
 
     const text = await response.text();
     let json;
@@ -32,6 +37,6 @@ export async function POST(req) {
 
     return NextResponse.json(json);
   } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    return NextResponse.json({ error: String(error) }, { status: 504 });
   }
 }
